@@ -11,6 +11,7 @@ module.exports = {
     "^@services(.*)$": "<rootDir>/src/services$1",
     "^@instances(.*)$": "<rootDir>/src/instances$1",
     "^@helpers(.*)$": "<rootDir>/src/helpers$1",
+    "^@mappers(.*)$": "<rootDir>/src/mappers$1",
     "^@styles(.*)$": "<rootDir>/src/styles$1",
   },
 };

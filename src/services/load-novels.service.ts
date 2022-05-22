@@ -1,4 +1,5 @@
 import { fauna, q } from "@instances/fauna";
+import { novelMapper } from "@mappers/novel-mapper";
 import { NovelResponse } from "@models/novels.response";
 
 type Response = {
@@ -13,16 +14,7 @@ export const loadNovelsService = async (): Promise<any> => {
 
   const results = query.data?.map((novelResponse) => {
     const novel = novelResponse.data;
-
-    const date = novel?.date
-      ? new Intl.DateTimeFormat("pt-BR", {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        }).format(new Date(novel?.date))
-      : null;
-
-    return { ...novel, date };
+    return novelMapper(novel);
   });
 
   return results;

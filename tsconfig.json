@@ -21,6 +21,7 @@
       "@instances/*": ["src/instances/*"],
       "@services/*": ["src/services/*"],
       "@models/*": ["src/models/*"],
+      "@mappers/*": ["src/mappers/*"],
       "@helpers/*": ["src/helpers/*"],
       "@styles/*": ["src/styles/*"]
     }
