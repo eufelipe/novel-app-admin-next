@@ -21,6 +21,7 @@ import { useQuery } from "react-query";
 import { Header } from "@components/Header";
 import { api } from "@instances/api";
 import { Novel } from "@models/novel";
+import Link from "next/link";
 
 export default function Home() {
   const isWideVersion = useBreakpointValue({
@@ -100,15 +101,17 @@ export default function Home() {
                     </Td>
                   )}
                   <Td>
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      colorScheme="purple"
-                      leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                    >
-                      {isWideVersion ? "Editar" : undefined}
-                    </Button>
+                    <Link href={`/novels/${novel.id}`} passHref>
+                      <Button
+                        as="a"
+                        size="sm"
+                        fontSize="sm"
+                        colorScheme="purple"
+                        leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                      >
+                        {isWideVersion ? "Editar" : undefined}
+                      </Button>
+                    </Link>
                   </Td>
                 </Tr>
               ))}
