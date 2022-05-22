@@ -8,6 +8,8 @@ import {
   Button,
   CircularProgress,
   SimpleGrid,
+  VStack,
+  Image,
 } from "@chakra-ui/react";
 
 import Link from "next/link";
@@ -36,12 +38,16 @@ export default function Novel() {
     isLoading,
   } = useQuery(`novel_${id}`, id ? loadNovel : null);
 
-  const onSave = async () => {
+  const handleSave = async () => {
     if (!date) return;
     await api.post("/novels/store", {
       id,
       date,
     });
+    refetch();
+  };
+
+  const handleDeletePhoto = async (photo: string) => {
     refetch();
   };
 
@@ -87,12 +93,42 @@ export default function Novel() {
                 {/* )} */}
               </Flex>
 
+              <VStack spacing="8">
+                <SimpleGrid
+                  display="flex"
+                  minChildWidth="240px"
+                  spacing={["6", "8"]}
+                >
+                  {(novel?.photos ?? []).map((photo, index) => {
+                    return (
+                      <VStack key={`id-${index}`}>
+                        <Image
+                          alt="imagem"
+                          width="300px"
+                          height="186px"
+                          src={`${process.env.NEXT_PUBLIC_AWS_S3_BASE_URL}/${photo}`}
+                        />
+
+                        <Button
+                          onClick={() => handleDeletePhoto(photo)}
+                          colorScheme="whiteAlpha"
+                        >
+                          Remover
+                        </Button>
+                      </VStack>
+                    );
+                  })}
+                </SimpleGrid>
+              </VStack>
+
+              <Divider my="6" borderColor="gray.700" />
+
               <Flex mt="8" justify="flex-end">
                 <HStack spacing="4">
                   <Link href="/novels" passHref>
                     <Button colorScheme="whiteAlpha">Cancelar</Button>
                   </Link>
-                  <Button onClick={onSave} colorScheme="cyan">
+                  <Button onClick={handleSave} colorScheme="cyan">
                     Salvar
                   </Button>
                 </HStack>
