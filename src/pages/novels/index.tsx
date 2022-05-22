@@ -106,7 +106,7 @@ export default function Home() {
                         as="a"
                         size="sm"
                         fontSize="sm"
-                        colorScheme="purple"
+                        colorScheme="cyan"
                         leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
                       >
                         {isWideVersion ? "Editar" : undefined}

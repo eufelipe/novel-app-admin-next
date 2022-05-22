@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Divider,
@@ -7,6 +7,7 @@ import {
   HStack,
   Button,
   CircularProgress,
+  SimpleGrid,
 } from "@chakra-ui/react";
 
 import Link from "next/link";
@@ -16,8 +17,11 @@ import { useQuery } from "react-query";
 import { api } from "@instances/api";
 import { Header } from "../../components/Header";
 import { Novel as NovelModel } from "@models/novel";
+import { Input } from "@components/Form/input";
 
 export default function Novel() {
+  const [date, setDate] = useState<string>();
+
   const router = useRouter();
   const { id } = router.query;
 
@@ -52,6 +56,27 @@ export default function Novel() {
               </Heading>
 
               <Divider my="6" borderColor="gray.700" />
+
+              <Flex mt="8">
+                {novel?.photos.length > 4 && (
+                  <HStack spacing="8" width="80%">
+                    <SimpleGrid
+                      minChildWidth="240px"
+                      spacing={["6", "8"]}
+                      w="100%"
+                      mb="30"
+                    >
+                      <Input
+                        w="240px"
+                        type="date"
+                        name="game_date"
+                        onChange={(event) => setDate(event.target.value)}
+                        label="Data no jogo:"
+                      />
+                    </SimpleGrid>
+                  </HStack>
+                )}
+              </Flex>
 
               <Flex mt="8" justify="flex-end">
                 <HStack spacing="4">

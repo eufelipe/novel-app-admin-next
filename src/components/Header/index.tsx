@@ -1,4 +1,5 @@
 import { Flex, Box, useBreakpointValue } from "@chakra-ui/react";
+import Link from "next/link";
 import { Logo } from "./Logo";
 import { Profile } from "./Profile";
 import { Search } from "./Search";
@@ -22,7 +23,11 @@ export function Header() {
         align="center"
         as="header"
       >
-        <Logo />
+        <Link href="/novels" passHref>
+          <Box as="a">
+            <Logo />
+          </Box>
+        </Link>
         {isWideVersion && (
           <Box flex="1">
             <Search />
