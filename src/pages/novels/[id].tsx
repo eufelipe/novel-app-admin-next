@@ -10,6 +10,7 @@ import {
   SimpleGrid,
   VStack,
   Image,
+  Text,
 } from "@chakra-ui/react";
 
 import Link from "next/link";
@@ -20,9 +21,12 @@ import { api } from "@instances/api";
 import { Header } from "../../components/Header";
 import { Novel as NovelModel } from "@models/novel";
 import { Input } from "@components/Form/input";
+import { uploadPhotoToS3 } from "@services/upload-photo-to-s3.service";
 
 export default function Novel() {
   const [date, setDate] = useState<string>();
+  const [file, setFile] = useState<any>();
+  const [uploadingLoading, setUploadingLoading] = useState(false);
 
   const router = useRouter();
   const { id } = router.query;
@@ -44,6 +48,18 @@ export default function Novel() {
       id,
       date,
     });
+    refetch();
+  };
+
+  const handleUpload = (data) => {
+    setFile(data.target.files[0]);
+  };
+
+  const uploadFile = async () => {
+    setUploadingLoading(true);
+    await uploadPhotoToS3(String(id), file);
+    setFile(null);
+    setUploadingLoading(false);
     refetch();
   };
 
@@ -91,6 +107,24 @@ export default function Novel() {
                   </SimpleGrid>
                 </HStack>
                 {/* )} */}
+
+                <HStack spacing="4" mr="auto">
+                  {!!uploadingLoading ? (
+                    <Text>uploading....</Text>
+                  ) : (
+                    <input
+                      type="file"
+                      onChange={(e) => handleUpload(e)}
+                      accept="image/jpeg"
+                    />
+                  )}
+
+                  {file && (
+                    <Button colorScheme="pink" onClick={() => uploadFile()}>
+                      Enviar uma nova foto
+                    </Button>
+                  )}
+                </HStack>
               </Flex>
 
               <VStack spacing="8">
