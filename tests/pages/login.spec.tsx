@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "../test-utils";
-import LoginPage from "@pages/Login";
+import LoginPage from "@pages/login";
 
 describe("Login Page", () => {
   it("should render the label on login button", () => {
