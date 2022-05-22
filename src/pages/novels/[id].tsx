@@ -36,6 +36,15 @@ export default function Novel() {
     isLoading,
   } = useQuery(`novel_${id}`, id ? loadNovel : null);
 
+  const onSave = async () => {
+    if (!date) return;
+    await api.post("/novels/store", {
+      id,
+      date,
+    });
+    refetch();
+  };
+
   return (
     <Box maxWidth={1120} margin="0 auto">
       <Header />
@@ -58,24 +67,24 @@ export default function Novel() {
               <Divider my="6" borderColor="gray.700" />
 
               <Flex mt="8">
-                {novel?.photos.length > 4 && (
-                  <HStack spacing="8" width="80%">
-                    <SimpleGrid
-                      minChildWidth="240px"
-                      spacing={["6", "8"]}
-                      w="100%"
-                      mb="30"
-                    >
-                      <Input
-                        w="240px"
-                        type="date"
-                        name="game_date"
-                        onChange={(event) => setDate(event.target.value)}
-                        label="Data no jogo:"
-                      />
-                    </SimpleGrid>
-                  </HStack>
-                )}
+                {/* {novel?.photos.length > 4 && ( */}
+                <HStack spacing="8" width="80%">
+                  <SimpleGrid
+                    minChildWidth="240px"
+                    spacing={["6", "8"]}
+                    w="100%"
+                    mb="30"
+                  >
+                    <Input
+                      w="240px"
+                      type="date"
+                      name="game_date"
+                      onChange={(event) => setDate(event.target.value)}
+                      label="Data no jogo:"
+                    />
+                  </SimpleGrid>
+                </HStack>
+                {/* )} */}
               </Flex>
 
               <Flex mt="8" justify="flex-end">
@@ -83,6 +92,9 @@ export default function Novel() {
                   <Link href="/novels" passHref>
                     <Button colorScheme="whiteAlpha">Cancelar</Button>
                   </Link>
+                  <Button onClick={onSave} colorScheme="cyan">
+                    Salvar
+                  </Button>
                 </HStack>
               </Flex>
             </>

@@ -1,4 +1,4 @@
-import { methodNotAllowed, ok } from "@helpers/http-helpers";
+import { methodNotAllowed, ok, badRequest } from "@helpers/http-helpers";
 import { loadNovelsService } from "@services/load-novels.service";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -11,6 +11,6 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     return ok(response, results);
   } catch (error) {
     console.log(error);
-    return ok(response, { message: "no results" });
+    return badRequest(response, { message: "no results" });
   }
 };

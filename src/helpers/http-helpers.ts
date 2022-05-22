@@ -7,3 +7,11 @@ export const methodNotAllowed = (response: NextApiResponse) => {
 export const ok = (response: NextApiResponse, data: any) => {
   return response.status(200).json(data);
 };
+
+export const created = (response: NextApiResponse) => {
+  return response.status(201).json({ message: "Created" });
+};
+
+export const badRequest = (response: NextApiResponse, data: any) => {
+  return response.status(400).json(data);
+};
