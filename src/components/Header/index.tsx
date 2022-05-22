@@ -11,6 +11,7 @@ export function Header() {
       h="20"
       mx="auto"
       mt="4"
+      mb="10"
       px="6"
       align="center"
       as="header"

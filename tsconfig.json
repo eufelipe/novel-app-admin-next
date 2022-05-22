@@ -18,6 +18,7 @@
     "paths": {
       "@pages/*": ["src/pages/*"],
       "@components/*": ["src/components/*"],
+      "@models/*": ["src/models/*"],
       "@styles/*": ["src/styles/*"]
     }
   },

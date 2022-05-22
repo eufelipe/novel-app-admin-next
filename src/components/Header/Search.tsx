@@ -13,7 +13,8 @@ export function Search() {
         maxWidth={400}
         color="gray.200"
         position="relative"
-        bg="gray.800"
+        borderColor="gray.700"
+        borderWidth="2px"
         borderRadius="full"
       >
         <Input
