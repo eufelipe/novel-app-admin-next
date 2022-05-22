@@ -5,6 +5,7 @@ module.exports = {
   },
   testEnvironment: "jsdom",
   moduleNameMapper: {
-    "^@pages(.*)$": "<rootDir>/pages$1",
+    "^@pages(.*)$": "<rootDir>/src/pages$1",
+    "^@styles(.*)$": "<rootDir>/src/styles$1",
   },
 };
