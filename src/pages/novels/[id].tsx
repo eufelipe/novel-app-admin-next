@@ -64,6 +64,12 @@ export default function Novel() {
   };
 
   const handleDeletePhoto = async (photo: string) => {
+    await api.delete("/novels/photos/delete", {
+      params: {
+        photo,
+        id,
+      },
+    });
     refetch();
   };
 
