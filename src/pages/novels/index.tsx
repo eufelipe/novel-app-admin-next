@@ -11,6 +11,7 @@ import {
   Text,
   Button,
   Icon,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { Header } from "@components/Header";
 import { Novel } from "@models/novel";
@@ -21,14 +22,22 @@ const DATA: Novel[] = [
     id: "1",
     name: "Avenida Brasil",
     date: "12 de maio de 2022",
+    photos: ["photo1", "photo2"],
   },
   {
     id: "2",
     name: "Kubanacan",
+    date: "12 de maio de 2022",
+    photos: [],
   },
 ];
 
 export default function Home() {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true,
+  });
+
   return (
     <Box maxWidth={1120} margin="0 auto">
       <Header />
@@ -44,8 +53,8 @@ export default function Home() {
           <Thead>
             <Tr>
               <Th>Novela</Th>
-              <Th>Fotos</Th>
-              <Th>Data</Th>
+              {isWideVersion && <Th>Fotos</Th>}
+              {isWideVersion && <Th>Data</Th>}
               <Th width="8"></Th>
             </Tr>
           </Thead>
@@ -54,21 +63,40 @@ export default function Home() {
               return (
                 <Tr key={novel.id}>
                   <Td px={["4", "4", "6"]}>
-                    <Text
-                      textTransform="capitalize"
-                      fontWeight="bold"
-                      color="gray.500"
-                    >
-                      {novel.name}
-                    </Text>
+                    <Box>
+                      <Text
+                        textTransform="capitalize"
+                        fontWeight="bold"
+                        color="gray.500"
+                      >
+                        {novel.name}
+                      </Text>
+                      {!isWideVersion && (
+                        <>
+                          <Text fontSize="12" color="gray.500">
+                            {novel?.date}
+                          </Text>
+                          {novel.photos?.length && (
+                            <Text fontSize="12" color="gray.500">
+                              fotos: {novel.photos?.length ?? 0}
+                            </Text>
+                          )}
+                        </>
+                      )}
+                    </Box>
                   </Td>
 
-                  <Td>
-                    <Text color="gray.500">{novel.photos?.length ?? 0}</Text>
-                  </Td>
-                  <Td>
-                    <Text color="gray.500">{novel?.date}</Text>
-                  </Td>
+                  {isWideVersion && (
+                    <Td>
+                      <Text color="gray.500">{novel.photos?.length ?? 0}</Text>
+                    </Td>
+                  )}
+
+                  {isWideVersion && (
+                    <Td>
+                      <Text color="gray.500">{novel?.date}</Text>
+                    </Td>
+                  )}
                   <Td>
                     <Button
                       as="a"
@@ -77,7 +105,7 @@ export default function Home() {
                       colorScheme="purple"
                       leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
                     >
-                      Editar
+                      {isWideVersion ? "Editar" : undefined}
                     </Button>
                   </Td>
                 </Tr>
