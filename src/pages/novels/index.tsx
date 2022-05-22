@@ -12,31 +12,31 @@ import {
   Button,
   Icon,
   useBreakpointValue,
+  CircularProgress,
 } from "@chakra-ui/react";
-import { Header } from "@components/Header";
-import { Novel } from "@models/novel";
-import { RiPencilLine } from "react-icons/ri";
 
-const DATA: Novel[] = [
-  {
-    id: "1",
-    name: "Avenida Brasil",
-    date: "12 de maio de 2022",
-    photos: ["photo1", "photo2"],
-  },
-  {
-    id: "2",
-    name: "Kubanacan",
-    date: "12 de maio de 2022",
-    photos: [],
-  },
-];
+import { RiPencilLine } from "react-icons/ri";
+import { useQuery } from "react-query";
+
+import { Header } from "@components/Header";
+import { api } from "@instances/api";
+import { Novel } from "@models/novel";
 
 export default function Home() {
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
   });
+
+  const loadNovels = async (): Promise<Novel[]> => {
+    const response = await api.get("/novels");
+    return response.data;
+  };
+
+  const { data: novels = [], isLoading } = useQuery<Novel[]>(
+    "novels",
+    loadNovels
+  );
 
   return (
     <Box maxWidth={1120} margin="0 auto">
@@ -49,18 +49,20 @@ export default function Home() {
           </Heading>
         </Flex>
 
-        <Table colorScheme="whiteAlpha.100">
-          <Thead>
-            <Tr>
-              <Th>Novela</Th>
-              {isWideVersion && <Th>Fotos</Th>}
-              {isWideVersion && <Th>Data</Th>}
-              <Th width="8"></Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {DATA.map((novel, index) => {
-              return (
+        {isLoading && <CircularProgress isIndeterminate />}
+
+        {!isLoading && (
+          <Table colorScheme="whiteAlpha.100">
+            <Thead>
+              <Tr>
+                <Th>Novela</Th>
+                {isWideVersion && <Th>Fotos</Th>}
+                {isWideVersion && <Th>Data</Th>}
+                <Th width="8"></Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {novels.map((novel) => (
                 <Tr key={novel.id}>
                   <Td px={["4", "4", "6"]}>
                     <Box>
@@ -109,10 +111,10 @@ export default function Home() {
                     </Button>
                   </Td>
                 </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
+              ))}
+            </Tbody>
+          </Table>
+        )}
       </Box>
     </Box>
   );
