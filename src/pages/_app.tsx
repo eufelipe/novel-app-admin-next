@@ -3,6 +3,7 @@ import { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { theme } from "@styles/theme";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { SessionProvider } from "next-auth/react";
 
 const queryClient = new QueryClient();
 
@@ -13,11 +14,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   if (!mounted) return null;
 
   return (
-    <ChakraProvider resetCSS theme={theme}>
-      <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
-      </QueryClientProvider>
-    </ChakraProvider>
+    <SessionProvider session={pageProps.session}>
+      <ChakraProvider resetCSS theme={theme}>
+        <QueryClientProvider client={queryClient}>
+          <Component {...pageProps} />
+        </QueryClientProvider>
+      </ChakraProvider>
+    </SessionProvider>
   );
 }
 
