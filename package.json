@@ -4,6 +4,7 @@
   "private": true,
   "repository": "git@github.com:eufelipe/novel-app-admin-next.git",
   "author": "Felipe Rosas <contato@eufelipe.com>",
+  "license": "GPL-3.0-or-later",
   "scripts": {
     "prepare": "husky install",
     "dev": "next dev",
