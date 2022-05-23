@@ -180,3 +180,5 @@ export default function Novel() {
     </Box>
   );
 }
+
+Novel.auth = true;

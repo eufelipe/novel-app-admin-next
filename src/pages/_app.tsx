@@ -4,10 +4,11 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { theme } from "@styles/theme";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { SessionProvider } from "next-auth/react";
+import { Auth } from "@components/Auth";
 
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -17,7 +18,13 @@ function MyApp({ Component, pageProps }: AppProps) {
     <SessionProvider session={pageProps.session}>
       <ChakraProvider resetCSS theme={theme}>
         <QueryClientProvider client={queryClient}>
-          <Component {...pageProps} />
+          {Component.auth ? (
+            <Auth>
+              <Component {...pageProps} />
+            </Auth>
+          ) : (
+            <Component {...pageProps} />
+          )}
         </QueryClientProvider>
       </ChakraProvider>
     </SessionProvider>

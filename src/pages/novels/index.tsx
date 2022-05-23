@@ -122,3 +122,4 @@ export default function Home() {
     </Box>
   );
 }
+Home.auth = true;

@@ -6,6 +6,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
   if (request.method !== "GET") {
     return methodNotAllowed(response);
   }
+
   try {
     const { id } = request.query;
     const results = await findNovelService(String(id));

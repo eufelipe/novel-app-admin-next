@@ -16,6 +16,10 @@ export const badRequest = (response: NextApiResponse, data: any) => {
   return response.status(400).json(data);
 };
 
+export const unauthorized = (response: NextApiResponse) => {
+  return response.status(401).send("Not authorized");
+};
+
 export const serverError = (response: NextApiResponse) => {
   return response.status(500).send("Internal server error");
 };
