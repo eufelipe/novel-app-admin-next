@@ -1,10 +1,19 @@
 import { Flex, Box, Text, Avatar } from "@chakra-ui/react";
+import { LoginButton } from "@components/LoginButton";
 import { useSession, signOut } from "next-auth/react";
 
 export function Profile() {
   const { data: session } = useSession();
 
-  const user = session?.session?.user;
+  const user = session?.user;
+
+  if (!user) {
+    return (
+      <Flex align="center" ml="auto">
+        <LoginButton />
+      </Flex>
+    );
+  }
 
   return (
     <Flex align="center" ml="auto">

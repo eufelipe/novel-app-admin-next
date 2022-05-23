@@ -1,7 +1,7 @@
-import { Flex, Button, Text, Image } from "@chakra-ui/react";
-import { FaGoogle } from "react-icons/fa";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { Flex, Image } from "@chakra-ui/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { LoginButton } from "@components/LoginButton";
 
 export default function Login() {
   const { data: session } = useSession();
@@ -17,18 +17,7 @@ export default function Login() {
       <Flex width="100%" maxWidth={360} p="8" borderRadius={8} flexDir="column">
         <Image src="/logo.png" alt="Novel" />
 
-        <Button
-          width="100%"
-          type="submit"
-          mt="6"
-          size="lg"
-          onClick={() => signIn("google")}
-        >
-          <FaGoogle color="#eba417" />
-          <Text ml="4" color="gray.650">
-            Sign in with Google
-          </Text>
-        </Button>
+        <LoginButton />
       </Flex>
     </Flex>
   );

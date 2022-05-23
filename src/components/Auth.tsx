@@ -3,6 +3,7 @@ import React from "react";
 
 export function Auth({ children }) {
   const { data: session, status } = useSession();
+
   const isUser = !!session?.user;
 
   React.useEffect(() => {

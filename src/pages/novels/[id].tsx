@@ -22,8 +22,10 @@ import { Header } from "../../components/Header";
 import { Novel as NovelModel } from "@models/novel";
 import { Input } from "@components/Form/input";
 import { uploadPhotoToS3 } from "@services/upload-photo-to-s3.service";
+import { useSession } from "next-auth/react";
 
 export default function Novel() {
+  const { data: session } = useSession();
   const [date, setDate] = useState<string>();
   const [file, setFile] = useState<any>();
   const [uploadingLoading, setUploadingLoading] = useState(false);
@@ -72,6 +74,32 @@ export default function Novel() {
     });
     refetch();
   };
+
+  if (!session) {
+    return (
+      <Box maxWidth={1120} margin="0 auto">
+        <Header />
+
+        <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+          <Box flex="1" borderRadius={8} bg="gray.800" p={["6", "8"]}>
+            <Heading
+              size="lg"
+              fontWeight="normal"
+              textTransform="capitalize"
+              color="white"
+            >
+              {novel.name}
+            </Heading>
+            <Divider my="6" borderColor="gray.700" />
+
+            <Text color="gray.500">
+              Faça a autenticação para editar as informações
+            </Text>
+          </Box>
+        </Flex>
+      </Box>
+    );
+  }
 
   return (
     <Box maxWidth={1120} margin="0 auto">
