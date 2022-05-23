@@ -15,13 +15,17 @@ export function ListItem({ id, name, onSelect }: ListItemProps) {
         w="350px"
         display="flex"
         p="4"
-        as="button"
-        onClick={(event) => onSelect(event, id)}
         _hover={{
           bgColor: "gray.400",
         }}
       >
-        <Text textTransform="capitalize" fontWeight="bold" color="gray.900">
+        <Text
+          as="a"
+          onClick={(event) => onSelect(event, id)}
+          textTransform="capitalize"
+          fontWeight="bold"
+          color="gray.900"
+        >
           {name}
         </Text>
       </Box>

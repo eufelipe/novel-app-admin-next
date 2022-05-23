@@ -18,12 +18,8 @@ export default NextAuth({
   ],
   secret: process.env.JWT_SECRET,
   callbacks: {
-    async session(params) {
-      try {
-        return { ...params };
-      } catch (error) {
-        return params;
-      }
+    async session({ session, token }) {
+      return session;
     },
 
     async signIn({ user }) {

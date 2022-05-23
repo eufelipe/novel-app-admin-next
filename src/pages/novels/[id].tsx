@@ -88,7 +88,7 @@ export default function Novel() {
               textTransform="capitalize"
               color="white"
             >
-              {novel.name}
+              {novel?.name}
             </Heading>
             <Divider my="6" borderColor="gray.700" />
 
