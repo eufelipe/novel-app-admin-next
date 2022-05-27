@@ -16,12 +16,15 @@ import {
 } from "@chakra-ui/react";
 
 import { RiPencilLine } from "react-icons/ri";
-import { useQuery } from "react-query";
+import { useInfiniteQuery, useQuery } from "react-query";
 
 import { Header } from "@components/Header";
 import { api } from "@instances/api";
 import { Novel } from "@models/novel";
 import Link from "next/link";
+import { NovelQueryResponse } from "@services/load-novels.service";
+import { useCallback, useEffect, useState } from "react";
+import React from "react";
 
 export default function Home() {
   const isWideVersion = useBreakpointValue({
@@ -29,15 +32,29 @@ export default function Home() {
     lg: true,
   });
 
-  const loadNovels = async (): Promise<Novel[]> => {
-    const response = await api.get("/novels");
-    return response.data;
-  };
-
-  const { data: novels = [], isLoading } = useQuery<Novel[]>(
-    "novels",
-    loadNovels
+  const loadNovelsFromApi = useCallback(
+    async (nextPage): Promise<{ results: Novel[]; nextPage: number }> => {
+      const response = await api.get<NovelQueryResponse>(
+        `/novels?after=${nextPage?.pageParam}`
+      );
+      const results = response.data?.results;
+      return { results, nextPage: response.data.after };
+    },
+    []
   );
+
+  const {
+    data: novels,
+    isLoading,
+    isFetchingNextPage,
+    isError,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery("posts", loadNovelsFromApi, {
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.nextPage;
+    },
+  });
 
   return (
     <Box maxWidth={1120} margin="0 auto">
@@ -63,63 +80,98 @@ export default function Home() {
               </Tr>
             </Thead>
             <Tbody>
-              {novels.map((novel) => (
-                <Tr key={novel.id}>
-                  <Td px={["4", "4", "6"]}>
-                    <Box>
-                      <Text
-                        textTransform="capitalize"
-                        fontWeight="bold"
-                        color="gray.500"
-                      >
-                        {novel.name}
-                      </Text>
-                      {!isWideVersion && (
-                        <>
-                          <Text fontSize="12" color="gray.500">
-                            {novel?.date}
+              {novels?.pages.map((group, i) => (
+                <React.Fragment key={i}>
+                  {group?.results?.map((novel, index) => (
+                    <Tr key={novel.id}>
+                      <Td px={["4", "4", "6"]}>
+                        <Box>
+                          <Text
+                            textTransform="capitalize"
+                            fontWeight="bold"
+                            color="gray.500"
+                          >
+                            {novel.name}
                           </Text>
-                          {novel.photos?.length && (
-                            <Text fontSize="12" color="gray.500">
-                              fotos: {novel.photos?.length ?? 0}
-                            </Text>
+                          {!isWideVersion && (
+                            <>
+                              <Text fontSize="12" color="gray.500">
+                                {novel?.date}
+                              </Text>
+
+                              {novel.photos?.length && (
+                                <Text fontSize="12" color="gray.500">
+                                  fotos: {novel.photos?.length ?? 0}
+                                </Text>
+                              )}
+                            </>
                           )}
-                        </>
+                        </Box>
+                      </Td>
+
+                      {isWideVersion && (
+                        <Td>
+                          <Text color="gray.500">
+                            {novel.photos?.length ?? 0}
+                          </Text>
+                        </Td>
                       )}
-                    </Box>
-                  </Td>
 
-                  {isWideVersion && (
-                    <Td>
-                      <Text color="gray.500">{novel.photos?.length ?? 0}</Text>
-                    </Td>
-                  )}
-
-                  {isWideVersion && (
-                    <Td>
-                      <Text color="gray.500">{novel?.date}</Text>
-                    </Td>
-                  )}
-                  <Td>
-                    <Link href={`/novels/${novel.id}`} passHref>
-                      <Button
-                        as="a"
-                        size="sm"
-                        fontSize="sm"
-                        colorScheme="cyan"
-                        leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                      >
-                        {isWideVersion ? "Editar" : undefined}
-                      </Button>
-                    </Link>
-                  </Td>
-                </Tr>
+                      {isWideVersion && (
+                        <Td>
+                          <Text color="gray.500">{novel?.date}</Text>
+                        </Td>
+                      )}
+                      <Td>
+                        <Link href={`/novels/${novel.id}`} passHref>
+                          <Button
+                            as="a"
+                            size="sm"
+                            fontSize="sm"
+                            colorScheme="cyan"
+                            leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                          >
+                            {isWideVersion ? "Editar" : undefined}
+                          </Button>
+                        </Link>
+                      </Td>
+                    </Tr>
+                  ))}
+                </React.Fragment>
               ))}
             </Tbody>
           </Table>
+        )}
+
+        {isError && (
+          <Flex
+            mb="8"
+            p="4"
+            justify="space-between"
+            align="center"
+            bg="red.900"
+            borderRadius={8}
+          >
+            <Text fontSize="12" color="white">
+              Ocorreu um erro
+            </Text>
+          </Flex>
+        )}
+
+        {!isLoading && (
+          <Flex p="8" align="center" mt="20" justify="center">
+            <Button
+              size="sm"
+              fontSize="sm"
+              colorScheme="gray.900"
+              isLoading={!isLoading && isFetchingNextPage}
+              onClick={() => fetchNextPage()}
+            >
+              carregar mais..
+            </Button>
+          </Flex>
         )}
       </Box>
     </Box>
   );
 }
-Home.auth = true;

@@ -8,9 +8,9 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
   }
   try {
     //TODO: refactor for search by photos on fauna db
-    const results = await loadNovelsService();
+    const data = await loadNovelsService();
 
-    const random = results.filter((item) => item.photos?.length >= 5);
+    const random = data.results.filter((item) => item.photos?.length >= 5);
     const novel = random[Math.floor(Math.random() * random.length)];
 
     return ok(response, novel);

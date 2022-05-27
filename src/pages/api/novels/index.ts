@@ -7,7 +7,8 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     return methodNotAllowed(response);
   }
   try {
-    const results = await loadNovelsService();
+    const { after } = request.query;
+    const results = await loadNovelsService(String(after));
     return ok(response, results);
   } catch (error) {
     console.log(error);
