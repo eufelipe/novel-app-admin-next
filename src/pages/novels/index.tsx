@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 
 import { RiPencilLine } from "react-icons/ri";
-import { useInfiniteQuery, useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 
 import { Header } from "@components/Header";
 import { api } from "@instances/api";

@@ -37,6 +37,7 @@ export function FormCreateModal({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
+    setError("");
     if (!name) return;
 
     try {

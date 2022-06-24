@@ -19,8 +19,8 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
   }
 
   try {
-    const { date, id } = request.body;
-    await storeNovelService(id, date);
+    const { id, name, date, author, year } = request.body;
+    await storeNovelService({ id, name, date, author, year });
     return created(response);
   } catch (error) {
     console.log(error);

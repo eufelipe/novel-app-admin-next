@@ -30,8 +30,12 @@ export const InputBase: ForwardRefRenderFunction<
         color="gray.900"
         variant="filled"
         _hover={{
-          bgColor: "gray.100",
-          color: "white",
+          bgColor: "gray.500",
+          color: "gray.900",
+        }}
+        _focus={{
+          bgColor: "gray.300",
+          color: "gray.900",
         }}
         size="lg"
         ref={ref}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Divider,
@@ -25,12 +25,22 @@ import { Input } from "@components/Form/input";
 import { uploadPhotoToS3 } from "@services/upload-photo-to-s3.service";
 import { useSession } from "next-auth/react";
 import { UploadButton } from "@components/UploadButton";
+import { RiPencilLine } from "react-icons/ri";
+import { formatDate } from "@helpers/format-date";
 
 export default function Novel() {
   const { data: session } = useSession();
-  const [date, setDate] = useState<string>();
+
+  const [name, setName] = useState("");
+  const [author, setAuthor] = useState("");
+  const [year, setYear] = useState("");
+  const [date, setDate] = useState("");
+  const [error, setError] = useState("");
+
   const [files, setFiles] = useState<any[]>([]);
   const [uploadingLoading, setUploadingLoading] = useState(false);
+  const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const router = useRouter();
   const { id } = router.query;
@@ -47,12 +57,25 @@ export default function Novel() {
   } = useQuery(`novel_${id}`, id ? loadNovel : null);
 
   const handleSave = async () => {
-    if (!date) return;
-    await api.post("/novels/store", {
-      id,
-      date,
-    });
-    refetch();
+    if (!date || !name) return;
+
+    try {
+      setIsLoadingSave(true);
+
+      await api.post("/novels/store", {
+        id,
+        name,
+        author,
+        year,
+        date,
+      });
+      refetch();
+      setIsEditMode(false);
+    } catch (error) {
+      setError("Ocorreu um erro ao tentar salvar o registro");
+    } finally {
+      setIsLoadingSave(false);
+    }
   };
 
   const handleUpload = (items) => {
@@ -78,6 +101,13 @@ export default function Novel() {
     });
     refetch();
   };
+
+  useEffect(() => {
+    setName(novel?.name);
+    setAuthor(novel?.author);
+    setYear(novel?.year);
+    setDate(novel?.date);
+  }, [novel]);
 
   if (!session) {
     return (
@@ -115,58 +145,124 @@ export default function Novel() {
 
           {!isLoading && !!novel && (
             <>
-              <Heading
-                size="lg"
-                fontWeight="normal"
-                textTransform="capitalize"
-                color="white"
-              >
-                {novel.name}
-              </Heading>
+              <HStack spacing="8" justifyContent="space-between">
+                <>
+                  <Heading
+                    size="lg"
+                    fontWeight="normal"
+                    textTransform="capitalize"
+                    color="white"
+                  >
+                    {novel.name}
+                  </Heading>
+                  {date && (
+                    <HStack>
+                      <Text color="white" fontSize="sm">
+                        Esse game vai ao ar dia:
+                      </Text>
+                      <Text color="tomato" fontWeight="bold">
+                        {formatDate(date)}
+                      </Text>
+                    </HStack>
+                  )}
+                </>
+
+                <Button
+                  onClick={() => setIsEditMode(!isEditMode)}
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="cyan"
+                  leftIcon={<RiPencilLine fontSize="16" />}
+                >
+                  Editar
+                </Button>
+              </HStack>
 
               <Divider my="6" borderColor="gray.700" />
 
-              <Flex mt="8">
-                <HStack spacing="8" width="80%">
-                  {novel?.photos?.length > 4 && (
-                    <SimpleGrid
-                      minChildWidth="240px"
-                      spacing={["6", "8"]}
-                      w="100%"
-                      mb="30"
-                    >
-                      <Input
-                        w="240px"
-                        type="date"
-                        name="game_date"
-                        onChange={(event) => setDate(event.target.value)}
-                        label="Data no jogo:"
-                      />
-                    </SimpleGrid>
+              {!isEditMode && (
+                <HStack spacing="8" justifyContent="space-between">
+                  {novel?.author && (
+                    <Text fontSize="lg" color="white">
+                      Autor: {novel.author}
+                    </Text>
+                  )}
+                  {novel?.year && (
+                    <Text fontSize="lg" color="white">
+                      Ano: {novel.year}
+                    </Text>
                   )}
                 </HStack>
+              )}
 
-                <HStack spacing="4" mr="auto">
-                  {!!uploadingLoading ? (
-                    <>
-                      <Spinner size="sm" color="white" />
-                      <Text color="white">enviando....</Text>
-                    </>
-                  ) : (
-                    <UploadButton
-                      acceptedTypes="image/*"
-                      label="Upload fotos"
-                      onChange={handleUpload}
-                      allowMultiple={true}
-                    />
-                  )}
-                  {files.length > 0 && !uploadingLoading && (
-                    <Button colorScheme="pink" onClick={() => uploadFile()}>
-                      Enviar uma nova foto
-                    </Button>
-                  )}
-                </HStack>
-              </Flex>
+              {isEditMode && (
+                <>
+                  <Flex mt="8">
+                    <HStack spacing="8" width="100%">
+                      {novel?.photos?.length > 4 && (
+                        <SimpleGrid
+                          minChildWidth="240px"
+                          spacing={["2", "4"]}
+                          w="100%"
+                          mb="30"
+                        >
+                          <Input
+                            type="name"
+                            value={name}
+                            name="name"
+                            onChange={(event) => setName(event.target.value)}
+                            label="Nome da produção:"
+                          />
+                          <Input
+                            type="date"
+                            value={date}
+                            name="date"
+                            onChange={(event) => setDate(event.target.value)}
+                            label="Data no jogo:"
+                          />
+                          <Input
+                            type="author"
+                            value={author}
+                            name="author"
+                            onChange={(event) => setAuthor(event.target.value)}
+                            label="Autor:"
+                          />
+                          <Input
+                            w="100px"
+                            type="year"
+                            value={year}
+                            name="year"
+                            onChange={(event) => setYear(event.target.value)}
+                            label="Ano:"
+                          />
+                        </SimpleGrid>
+                      )}
+                    </HStack>
+                  </Flex>
+                  <Divider my="6" borderColor="gray.700" />
+
+                  <HStack spacing="4" mr="auto">
+                    {!!uploadingLoading ? (
+                      <>
+                        <Spinner size="sm" color="white" />
+                        <Text color="white">enviando....</Text>
+                      </>
+                    ) : (
+                      <UploadButton
+                        acceptedTypes="image/*"
+                        label="Upload fotos"
+                        onChange={handleUpload}
+                        allowMultiple={true}
+                      />
+                    )}
+                    {files.length > 0 && !uploadingLoading && (
+                      <Button colorScheme="pink" onClick={() => uploadFile()}>
+                        Enviar uma nova foto
+                      </Button>
+                    )}
+                  </HStack>
+                </>
+              )}
 
               <VStack spacing="8" mt="10">
                 <SimpleGrid
@@ -184,12 +280,14 @@ export default function Novel() {
                           src={`${process.env.NEXT_PUBLIC_AWS_S3_BASE_URL}/${photo}`}
                         />
 
-                        <Button
-                          onClick={() => handleDeletePhoto(photo)}
-                          colorScheme="whiteAlpha"
-                        >
-                          Remover
-                        </Button>
+                        {isEditMode && (
+                          <Button
+                            onClick={() => handleDeletePhoto(photo)}
+                            colorScheme="whiteAlpha"
+                          >
+                            Remover
+                          </Button>
+                        )}
                       </VStack>
                     );
                   })}
@@ -198,16 +296,35 @@ export default function Novel() {
 
               <Divider my="6" borderColor="gray.700" />
 
-              <Flex mt="8" justify="flex-end">
-                <HStack spacing="4">
+              {!!error && (
+                <Text
+                  bg="red.400"
+                  align="center"
+                  mt="2"
+                  p="2"
+                  borderRadius="5"
+                  color="white"
+                >
+                  {error}
+                </Text>
+              )}
+
+              {isEditMode && (
+                <HStack spacing="4" justifyContent="space-between">
                   <Link href="/novels" passHref>
-                    <Button colorScheme="whiteAlpha">Cancelar</Button>
+                    <Button colorScheme="whiteAlpha" variant="ghost">
+                      Cancelar
+                    </Button>
                   </Link>
-                  <Button onClick={handleSave} colorScheme="cyan">
+                  <Button
+                    onClick={handleSave}
+                    colorScheme="cyan"
+                    isLoading={isLoadingSave}
+                  >
                     Salvar
                   </Button>
                 </HStack>
-              </Flex>
+              )}
             </>
           )}
         </Box>

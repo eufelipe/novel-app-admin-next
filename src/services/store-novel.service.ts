@@ -7,10 +7,22 @@ type Response = {
   };
   data: Novel;
 };
-export const storeNovelService = async (
-  id: string,
-  date: string
-): Promise<void> => {
+
+interface StoreNovelProps {
+  id: string;
+  name: string;
+  date: string;
+  author?: string;
+  year?: string;
+}
+
+export const storeNovelService = async ({
+  id,
+  name,
+  author,
+  year,
+  date,
+}: StoreNovelProps): Promise<void> => {
   const novel = await fauna.query<Response>(
     q.Get(q.Match(q.Index("find_by_id"), q.Casefold(id)))
   );
@@ -18,6 +30,9 @@ export const storeNovelService = async (
   await fauna.query(
     q.Update(q.Ref(q.Collection("novels"), novel.ref.id), {
       data: {
+        name,
+        author,
+        year,
         date,
       },
     })
