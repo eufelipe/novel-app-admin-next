@@ -3,38 +3,43 @@ import axios from "axios";
 import { v4 as uuidV4 } from "uuid";
 
 type UploadRequest = {
-  file: File;
+  files: File[];
   name: string;
   type: string;
 };
 
 export const uploadPhotoToS3 = async (
   id: string,
-  file: UploadRequest
+  files: UploadRequest[]
 ): Promise<boolean> => {
   try {
-    const photoId = uuidV4();
-    const filename = `${photoId}.${file.name.split(".").pop()}`;
+    for (const file of files) {
+      const photoId = uuidV4();
 
-    let { data } = await api.post("/novels/photos/upload", {
-      name: filename,
-      type: file.type,
-    });
+      const filename = `${photoId}.${file.name.split(".").pop()}`;
 
-    const toUrl = data.url;
+      let { data } = await api.post("/novels/photos/upload", {
+        name: filename,
+        type: file.type,
+      });
 
-    await axios.put(toUrl, file, {
-      headers: {
-        "Content-type": file.type,
-        "Access-Control-Allow-Origin": "*",
-      },
-    });
+      const toUrl = data.url;
 
-    await api.post("/novels/photos/store", {
-      id,
-      photoId,
-      filename,
-    });
+      await axios.put(toUrl, file, {
+        headers: {
+          "Content-type": file.type,
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
+
+      await api.post("/novels/photos/store", {
+        id,
+        photoId,
+        filename,
+      });
+
+      console.log("filename", filename, toUrl);
+    }
 
     return true;
   } catch (error) {

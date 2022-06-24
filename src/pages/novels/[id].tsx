@@ -10,6 +10,7 @@ import {
   SimpleGrid,
   VStack,
   Image,
+  Spinner,
   Text,
 } from "@chakra-ui/react";
 
@@ -23,11 +24,12 @@ import { Novel as NovelModel } from "@models/novel";
 import { Input } from "@components/Form/input";
 import { uploadPhotoToS3 } from "@services/upload-photo-to-s3.service";
 import { useSession } from "next-auth/react";
+import { UploadButton } from "@components/UploadButton";
 
 export default function Novel() {
   const { data: session } = useSession();
   const [date, setDate] = useState<string>();
-  const [file, setFile] = useState<any>();
+  const [files, setFiles] = useState<any[]>([]);
   const [uploadingLoading, setUploadingLoading] = useState(false);
 
   const router = useRouter();
@@ -53,14 +55,16 @@ export default function Novel() {
     refetch();
   };
 
-  const handleUpload = (data) => {
-    setFile(data.target.files[0]);
+  const handleUpload = (items) => {
+    setFiles(items);
   };
 
   const uploadFile = async () => {
     setUploadingLoading(true);
-    await uploadPhotoToS3(String(id), file);
-    setFile(null);
+
+    await uploadPhotoToS3(String(id), files);
+
+    setFiles([]);
     setUploadingLoading(false);
     refetch();
   };
@@ -123,37 +127,40 @@ export default function Novel() {
               <Divider my="6" borderColor="gray.700" />
 
               <Flex mt="8">
-                {/* {novel?.photos.length > 4 && ( */}
                 <HStack spacing="8" width="80%">
-                  <SimpleGrid
-                    minChildWidth="240px"
-                    spacing={["6", "8"]}
-                    w="100%"
-                    mb="30"
-                  >
-                    <Input
-                      w="240px"
-                      type="date"
-                      name="game_date"
-                      onChange={(event) => setDate(event.target.value)}
-                      label="Data no jogo:"
-                    />
-                  </SimpleGrid>
+                  {novel?.photos.length > 4 && (
+                    <SimpleGrid
+                      minChildWidth="240px"
+                      spacing={["6", "8"]}
+                      w="100%"
+                      mb="30"
+                    >
+                      <Input
+                        w="240px"
+                        type="date"
+                        name="game_date"
+                        onChange={(event) => setDate(event.target.value)}
+                        label="Data no jogo:"
+                      />
+                    </SimpleGrid>
+                  )}
                 </HStack>
-                {/* )} */}
 
                 <HStack spacing="4" mr="auto">
                   {!!uploadingLoading ? (
-                    <Text>uploading....</Text>
+                    <>
+                      <Spinner size="sm" color="white" />
+                      <Text color="white">enviando....</Text>
+                    </>
                   ) : (
-                    <input
-                      type="file"
-                      onChange={(e) => handleUpload(e)}
-                      accept="image/jpeg"
+                    <UploadButton
+                      acceptedTypes="image/*"
+                      label="Upload fotos"
+                      onChange={handleUpload}
+                      allowMultiple={true}
                     />
                   )}
-
-                  {file && (
+                  {files.length > 0 && !uploadingLoading && (
                     <Button colorScheme="pink" onClick={() => uploadFile()}>
                       Enviar uma nova foto
                     </Button>
@@ -161,7 +168,7 @@ export default function Novel() {
                 </HStack>
               </Flex>
 
-              <VStack spacing="8">
+              <VStack spacing="8" mt="10">
                 <SimpleGrid
                   display="flex"
                   minChildWidth="240px"
