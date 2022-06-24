@@ -128,7 +128,7 @@ export default function Novel() {
 
               <Flex mt="8">
                 <HStack spacing="8" width="80%">
-                  {novel?.photos.length > 4 && (
+                  {novel?.photos?.length > 4 && (
                     <SimpleGrid
                       minChildWidth="240px"
                       spacing={["6", "8"]}
@@ -215,5 +215,3 @@ export default function Novel() {
     </Box>
   );
 }
-
-Novel.auth = true;

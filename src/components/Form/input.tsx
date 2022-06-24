@@ -18,7 +18,7 @@ export const InputBase: ForwardRefRenderFunction<
   return (
     <FormControl>
       {!!label && (
-        <FormLabel color="gray.500" htmlFor={name}>
+        <FormLabel color="gray.500" htmlFor={name} mb="0">
           {label}
         </FormLabel>
       )}
