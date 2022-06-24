@@ -199,44 +199,42 @@ export default function Novel() {
                 <>
                   <Flex mt="8">
                     <HStack spacing="8" width="100%">
-                      {novel?.photos?.length > 4 && (
-                        <SimpleGrid
-                          minChildWidth="240px"
-                          spacing={["2", "4"]}
-                          w="100%"
-                          mb="30"
-                        >
-                          <Input
-                            type="name"
-                            value={name}
-                            name="name"
-                            onChange={(event) => setName(event.target.value)}
-                            label="Nome da produção:"
-                          />
-                          <Input
-                            type="date"
-                            value={date}
-                            name="date"
-                            onChange={(event) => setDate(event.target.value)}
-                            label="Data no jogo:"
-                          />
-                          <Input
-                            type="author"
-                            value={author}
-                            name="author"
-                            onChange={(event) => setAuthor(event.target.value)}
-                            label="Autor:"
-                          />
-                          <Input
-                            w="100px"
-                            type="year"
-                            value={year}
-                            name="year"
-                            onChange={(event) => setYear(event.target.value)}
-                            label="Ano:"
-                          />
-                        </SimpleGrid>
-                      )}
+                      <SimpleGrid
+                        minChildWidth="240px"
+                        spacing={["2", "4"]}
+                        w="100%"
+                        mb="30"
+                      >
+                        <Input
+                          type="name"
+                          value={name}
+                          name="name"
+                          onChange={(event) => setName(event.target.value)}
+                          label="Nome da produção:"
+                        />
+                        <Input
+                          type="date"
+                          value={date}
+                          name="date"
+                          onChange={(event) => setDate(event.target.value)}
+                          label="Data no jogo:"
+                        />
+                        <Input
+                          type="author"
+                          value={author}
+                          name="author"
+                          onChange={(event) => setAuthor(event.target.value)}
+                          label="Autor:"
+                        />
+                        <Input
+                          w="100px"
+                          type="year"
+                          value={year}
+                          name="year"
+                          onChange={(event) => setYear(event.target.value)}
+                          label="Ano:"
+                        />
+                      </SimpleGrid>
                     </HStack>
                   </Flex>
                   <Divider my="6" borderColor="gray.700" />
