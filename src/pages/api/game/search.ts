@@ -10,6 +10,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     const { term = "" } = request.query;
     //TODO: refactor for search by term on fauna db
     const data = await loadNovelsService();
+
     const items = data.results.filter((item) =>
       item.name.toLowerCase().includes(String(term).toLowerCase())
     );

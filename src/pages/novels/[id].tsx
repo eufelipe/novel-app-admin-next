@@ -14,7 +14,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 
@@ -27,6 +26,7 @@ import { useSession } from "next-auth/react";
 import { UploadButton } from "@components/UploadButton";
 import { RiPencilLine } from "react-icons/ri";
 import { formatDate } from "@helpers/format-date";
+import { DeleteConfirmDialog } from "@components/DeleteConfirmDialog";
 
 export default function Novel() {
   const { data: session } = useSession();
@@ -42,8 +42,8 @@ export default function Novel() {
   const [isLoadingSave, setIsLoadingSave] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const router = useRouter();
-  const { id } = router.query;
+  const { push, query } = useRouter();
+  const { id } = query;
 
   const loadNovel = async (): Promise<NovelModel> => {
     const res = await api.get(`/novels/${id}`);
@@ -102,6 +102,15 @@ export default function Novel() {
     refetch();
   };
 
+  const handleDeleteNovel = async () => {
+    await api.delete("/novels/delete", {
+      params: {
+        id,
+      },
+    });
+    push("/novels");
+  };
+
   useEffect(() => {
     setName(novel?.name);
     setAuthor(novel?.author);
@@ -158,7 +167,7 @@ export default function Novel() {
                   {date && (
                     <HStack>
                       <Text color="white" fontSize="sm">
-                        Esse game vai ao ar dia:
+                        Esse game vai(foi) ao ar dia:
                       </Text>
                       <Text color="tomato" fontWeight="bold">
                         {formatDate(date)}
@@ -309,11 +318,8 @@ export default function Novel() {
 
               {isEditMode && (
                 <HStack spacing="4" justifyContent="space-between">
-                  <Link href="/novels" passHref>
-                    <Button colorScheme="whiteAlpha" variant="ghost">
-                      Cancelar
-                    </Button>
-                  </Link>
+                  <DeleteConfirmDialog onConfirmDelete={handleDeleteNovel} />
+
                   <Button
                     onClick={handleSave}
                     colorScheme="cyan"
