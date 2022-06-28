@@ -1,5 +1,5 @@
 import { methodNotAllowed, ok, badRequest } from "@helpers/http-helpers";
-import { loadNovelsService } from "@services/load-novels.service";
+import { searchNovelsService } from "@services/search-novels.service";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async (request: NextApiRequest, response: NextApiResponse) => {
@@ -9,9 +9,9 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
   try {
     const { term = "" } = request.query;
     //TODO: refactor for search by term on fauna db
-    const data = await loadNovelsService();
+    const data = await searchNovelsService();
 
-    const items = data.results.filter((item) =>
+    const items = data.filter((item) =>
       item.name.toLowerCase().includes(String(term).toLowerCase())
     );
 
