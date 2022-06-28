@@ -1,0 +1,30 @@
+ CreateIndex(
+    {
+      name: "search_novel_by_name",
+      unique: false,
+      serialized: true,
+      source: Collection("novels"),
+      terms: [
+        {
+          field: ["data", "id"]
+        }
+      ],
+      values: [
+        {
+          field: ["data", "created_at"], reverse: true
+        },
+        {
+          field: ["data", "id"]
+        },
+        {
+          field: ["data", "name"]
+        },
+        {
+          field: ["data", "date"]
+        },
+        {
+          field: ["ref"]
+        },
+      ]
+    }
+  )

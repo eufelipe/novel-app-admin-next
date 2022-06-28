@@ -8,14 +8,9 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
   }
   try {
     const { term = "" } = request.query;
-    //TODO: refactor for search by term on fauna db
-    const data = await searchNovelsService();
+    const data = await searchNovelsService(String(term));
 
-    const items = data.filter((item) =>
-      item.name.toLowerCase().includes(String(term).toLowerCase())
-    );
-
-    return ok(response, items);
+    return ok(response, data);
   } catch (error) {
     console.log(error);
     return badRequest(response, { message: "no results" });
