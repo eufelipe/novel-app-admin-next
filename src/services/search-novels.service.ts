@@ -12,8 +12,6 @@ export const searchNovelsService = async (term?: string): Promise<any> => {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-  console.log("searchTerm", searchTerm);
-
   const PATTERN_A = "[àâªæáäãåā]";
   const PATTERN_E = "[èéêëē]";
   const PATTERN_I = "[ìíîï]";
@@ -52,7 +50,7 @@ export const searchNovelsService = async (term?: string): Promise<any> => {
   const query = await fauna.query<Response>(
     q.Map(
       q.Filter(
-        q.Paginate(q.Match(q.Index("all_novels"))),
+        q.Paginate(q.Match(q.Index("all_novels")), { size: 400 }),
         q.Lambda("novelRef", q.ContainsStr(replaceAccents, searchTerm))
       ),
       q.Lambda("novelRef", q.Get(q.Var("novelRef")))
