@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { Box, Flex, Icon, Input } from "@chakra-ui/react";
+import { Box, Flex, Icon, Input, Spinner } from "@chakra-ui/react";
 import { RiSearchLine } from "react-icons/ri";
 import { api } from "@instances/api";
 import { ListItem } from "@components/Search/ListItem";
@@ -11,15 +11,21 @@ export function Search() {
   const { push } = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [filteredNovels, setFilteredNovels] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const searchNovels = async (term: string): Promise<any> => {
     const response = await api.get("/game/search", { params: { term } });
     setFilteredNovels(response.data);
+    setLoading(false);
   };
 
   const handleSearch = async (term) => {
+    setLoading(true);
     clearTimeout(filterTimeout);
-    if (!term) return setFilteredNovels([]);
+    if (!term) {
+      setLoading(false);
+      return setFilteredNovels([]);
+    }
 
     filterTimeout = setTimeout(async () => {
       await searchNovels(term);
@@ -61,7 +67,7 @@ export function Search() {
           _placeholder={{ color: "gray.400" }}
         />
 
-        <Icon as={RiSearchLine} fontSize="20" />
+        {!!loading ? <Spinner /> : <Icon as={RiSearchLine} fontSize="20" />}
       </Flex>
       {filteredNovels && filteredNovels.length > 0 && (
         <Flex

@@ -6,9 +6,6 @@ type Response = {
   data: NovelResponse[];
 };
 
-const FIND_ACCENTS = "á|ä|è|ë|î|ï|ò|ó|ö|ù|û|ñ|ç";
-const REPLACE_ACCENTS = "a|a|e|e|i|i|o|o|o|u|u|n|c";
-
 export const searchNovelsService = async (term?: string): Promise<any> => {
   const searchTerm = term
     .normalize("NFD")
@@ -17,24 +14,46 @@ export const searchNovelsService = async (term?: string): Promise<any> => {
 
   console.log("searchTerm", searchTerm);
 
+  const PATTERN_A = "[àâªæáäãåā]";
+  const PATTERN_E = "[èéêëē]";
+  const PATTERN_I = "[ìíîï]";
+  const PATTERN_O = "[ôœºööòóõøō]";
+  const PATTERN_U = "[ùúûü]";
+  const PATTERN_C = "[çćč]";
+
+  const replaceAccents = q.LowerCase(
+    q.ReplaceStrRegex(
+      q.ReplaceStrRegex(
+        q.ReplaceStrRegex(
+          q.ReplaceStrRegex(
+            q.ReplaceStrRegex(
+              q.ReplaceStrRegex(
+                q.Select(["data", "name"], q.Get(q.Var("novelRef"))),
+                PATTERN_A,
+                "a"
+              ),
+              PATTERN_E,
+              "e"
+            ),
+            PATTERN_I,
+            "i"
+          ),
+          PATTERN_O,
+          "o"
+        ),
+        PATTERN_U,
+        "u"
+      ),
+      PATTERN_C,
+      "c"
+    )
+  );
+
   const query = await fauna.query<Response>(
     q.Map(
       q.Filter(
         q.Paginate(q.Match(q.Index("all_novels"))),
-        q.Lambda(
-          "novelRef",
-          q.ContainsStr(
-            q.LowerCase(
-              q.ReplaceStrRegex(
-                q.Select(["data", "name"], q.Get(q.Var("novelRef"))),
-                FIND_ACCENTS,
-                REPLACE_ACCENTS,
-                false
-              )
-            ),
-            searchTerm
-          )
-        )
+        q.Lambda("novelRef", q.ContainsStr(replaceAccents, searchTerm))
       ),
       q.Lambda("novelRef", q.Get(q.Var("novelRef")))
     )
