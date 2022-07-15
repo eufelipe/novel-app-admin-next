@@ -1,5 +1,6 @@
-import { Flex, Box, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, useBreakpointValue } from "@chakra-ui/react";
 import Link from "next/link";
+import { FaGamepad } from "react-icons/fa";
 import { Logo } from "./Logo";
 import { Profile } from "./Profile";
 import { Search } from "./Search";
@@ -33,6 +34,19 @@ export function Header() {
             <Search />
           </Box>
         )}
+
+        <Link href="https://novel-app-web.vercel.app" passHref>
+          <Button
+            as="a"
+            size="sm"
+            fontSize="sm"
+            colorScheme="gray"
+            mr="20"
+            rightIcon={<Icon as={FaGamepad} fontSize="16" />}
+          >
+            Abrir Game
+          </Button>
+        </Link>
 
         <Profile />
       </Flex>
