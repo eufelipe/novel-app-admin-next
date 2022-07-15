@@ -1,4 +1,6 @@
 import {
+  Badge,
+  Box,
   Button,
   Flex,
   Heading,
@@ -33,17 +35,28 @@ export function Card({ novel }: CardProps) {
 
   return (
     <Flex align="start">
-      <VStack>
+      <VStack flex={1} align="flex-start">
         <Heading size="lg" fontWeight="normal" color="white" mb="5">
           Produção de Hoje
         </Heading>
 
         {novel.cover && (
-          <Image
-            width={200}
-            src={`${process.env.NEXT_PUBLIC_AWS_S3_BASE_URL}/${novel.cover}`}
-            alt={novel.name}
-          />
+          <Box ml="3" position="relative">
+            <Image
+              src={`${process.env.NEXT_PUBLIC_AWS_S3_BASE_URL}/${novel.cover}`}
+              alt={novel.name}
+            />
+
+            <Badge
+              ml="1"
+              colorScheme="green"
+              position="absolute"
+              top="3"
+              left="-2"
+            >
+              Fotos: {novel.photos.length}
+            </Badge>
+          </Box>
         )}
 
         <Heading size="lg" fontWeight="normal" color="white">
@@ -55,9 +68,6 @@ export function Card({ novel }: CardProps) {
         </Text>
         <Text fontSize="sm" color="white" mb="5">
           {novel.author} - {novel.year}
-        </Text>
-        <Text fontSize="sm" color="white">
-          fotos: {novel.photos.length}
         </Text>
 
         <Link href={`/novels/${novel.id}`} passHref>

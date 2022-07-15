@@ -20,7 +20,7 @@ export function NovelCardList({ novels }: NovelCardListProps) {
     );
 
   return (
-    <>
+    <VStack flex={1} align="flex-start" w="100%">
       {novels.map((item) => (
         <>
           <Link href={`/novels/${item.id}`} passHref>
@@ -28,9 +28,14 @@ export function NovelCardList({ novels }: NovelCardListProps) {
               key={item.id}
               flexDir="row"
               spacing="10px"
-              justify="center"
+              justify="flex-start"
               align="center"
+              w="100%"
               pb="2"
+              _hover={{
+                opacity: 0.4,
+                cursor: "pointer",
+              }}
             >
               <Image
                 width="20"
@@ -59,6 +64,6 @@ export function NovelCardList({ novels }: NovelCardListProps) {
           <Divider borderColor="gray.700" />
         </>
       ))}
-    </>
+    </VStack>
   );
 }
