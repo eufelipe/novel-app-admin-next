@@ -32,7 +32,7 @@ export const loadNovelsService = async (
     )
   );
 
-  const nextPage = query.after.length > 0 ? query.after[0].id : undefined;
+  const nextPage = query.after?.length > 0 ? query.after[0].id : undefined;
 
   const results = query.data?.map((novelResponse) => {
     const novel = novelResponse.data;
