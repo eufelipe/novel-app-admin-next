@@ -1,32 +1,32 @@
-import React, { useEffect, useState } from "react";
 import {
   Box,
+  Button,
+  CircularProgress,
   Divider,
   Flex,
   Heading,
   HStack,
-  Button,
-  CircularProgress,
-  SimpleGrid,
-  VStack,
   Image,
+  SimpleGrid,
   Spinner,
   Text,
+  VStack,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 
-import { api } from "@instances/api";
-import { Header } from "../../components/Header";
-import { Novel as NovelModel } from "@models/novel";
+import { DeleteConfirmDialog } from "@components/DeleteConfirmDialog";
 import { Input } from "@components/Form/input";
+import { UploadButton } from "@components/UploadButton";
+import { formatDate } from "@helpers/format-date";
+import { api } from "@instances/api";
+import { Novel as NovelModel } from "@models/novel";
 import { uploadPhotoToS3 } from "@services/upload-photo-to-s3.service";
 import { useSession } from "next-auth/react";
-import { UploadButton } from "@components/UploadButton";
 import { RiPencilLine } from "react-icons/ri";
-import { formatDate } from "@helpers/format-date";
-import { DeleteConfirmDialog } from "@components/DeleteConfirmDialog";
+import { Header } from "../../components/Header";
 
 export default function Novel() {
   const { data: session } = useSession();
@@ -57,6 +57,8 @@ export default function Novel() {
   } = useQuery(`novel_${id}`, id ? loadNovel : null);
 
   const handleSave = async () => {
+    setError(undefined);
+
     if (!date || !name) return;
 
     try {
@@ -72,6 +74,11 @@ export default function Novel() {
       refetch();
       setIsEditMode(false);
     } catch (error) {
+      console.log("error", error);
+      if (error?.response?.data?.message === "date already exist") {
+        setError("Outra novela/série já está cadastrada para esta data");
+        return;
+      }
       setError("Ocorreu um erro ao tentar salvar o registro");
     } finally {
       setIsLoadingSave(false);
@@ -308,6 +315,7 @@ export default function Novel() {
                   bg="red.400"
                   align="center"
                   mt="2"
+                  mb="10"
                   p="2"
                   borderRadius="5"
                   color="white"
