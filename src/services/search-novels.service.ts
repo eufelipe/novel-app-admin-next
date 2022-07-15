@@ -6,18 +6,21 @@ type Response = {
   data: NovelResponse[];
 };
 
+const LIMIT_FOR_QUERY = 400;
+const PATTERN_TO_REPLACE_A = "[àâªæáäãåā]";
+const PATTERN_TO_REPLACE_E = "[èéêëē]";
+const PATTERN_TO_REPLACE_I = "[ìíîï]";
+const PATTERN_TO_REPLACE_O = "[ôœºööòóõøō]";
+const PATTERN_TO_REPLACE_U = "[ùúûü]";
+const PATTERN_TO_REPLACE_C = "[çćč]";
+
 export const searchNovelsService = async (term?: string): Promise<any> => {
   const searchTerm = term
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-  const PATTERN_A = "[àâªæáäãåā]";
-  const PATTERN_E = "[èéêëē]";
-  const PATTERN_I = "[ìíîï]";
-  const PATTERN_O = "[ôœºööòóõøō]";
-  const PATTERN_U = "[ùúûü]";
-  const PATTERN_C = "[çćč]";
+  // Hadouken Ｏ( ｀_´)乂(｀_´ )Ｏ
 
   const replaceAccents = q.LowerCase(
     q.ReplaceStrRegex(
@@ -27,22 +30,22 @@ export const searchNovelsService = async (term?: string): Promise<any> => {
             q.ReplaceStrRegex(
               q.ReplaceStrRegex(
                 q.Select(["data", "name"], q.Get(q.Var("novelRef"))),
-                PATTERN_A,
+                PATTERN_TO_REPLACE_A,
                 "a"
               ),
-              PATTERN_E,
+              PATTERN_TO_REPLACE_E,
               "e"
             ),
-            PATTERN_I,
+            PATTERN_TO_REPLACE_I,
             "i"
           ),
-          PATTERN_O,
+          PATTERN_TO_REPLACE_O,
           "o"
         ),
-        PATTERN_U,
+        PATTERN_TO_REPLACE_U,
         "u"
       ),
-      PATTERN_C,
+      PATTERN_TO_REPLACE_C,
       "c"
     )
   );
@@ -50,7 +53,7 @@ export const searchNovelsService = async (term?: string): Promise<any> => {
   const query = await fauna.query<Response>(
     q.Map(
       q.Filter(
-        q.Paginate(q.Match(q.Index("all_novels")), { size: 400 }),
+        q.Paginate(q.Match(q.Index("all_novels")), { size: LIMIT_FOR_QUERY }),
         q.Lambda("novelRef", q.ContainsStr(replaceAccents, searchTerm))
       ),
       q.Lambda("novelRef", q.Get(q.Var("novelRef")))
