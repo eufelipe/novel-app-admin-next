@@ -5,7 +5,6 @@ import {
   Flex,
   Heading,
   Icon,
-  Image,
   SimpleGrid,
   Table,
   Tbody,
@@ -22,6 +21,7 @@ import {
 import { RiPencilLine } from "react-icons/ri";
 import { useInfiniteQuery, useQuery } from "react-query";
 
+import { Card } from "@components/Card";
 import { FormCreateModal } from "@components/FormCreateModal";
 import { Header } from "@components/Header";
 import { NovelCardList } from "@components/NovelCardList";
@@ -84,30 +84,8 @@ export default function Home() {
 
       {reports && (
         <SimpleGrid columns={[2, null, 3]} spacing="20px">
-          <Box borderRadius={8} bg="gray.800" p="8" mb="10" mr="10">
-            <Flex align="start">
-              <VStack>
-                <Heading size="lg" fontWeight="normal" color="white" mb="5">
-                  Produção de Hoje
-                </Heading>
-
-                {reports.today.cover && (
-                  <Image
-                    width={200}
-                    src={`${process.env.NEXT_PUBLIC_AWS_S3_BASE_URL}/${reports.today.cover}`}
-                    alt={reports.today.name}
-                  />
-                )}
-
-                <Heading size="md" fontWeight="normal" color="white">
-                  {reports.today.name}
-                </Heading>
-
-                <Text fontSize="sm" color="white" mb="5">
-                  {reports.today.dateFormatted}
-                </Text>
-              </VStack>
-            </Flex>
+          <Box borderRadius={8} bg="gray.800" p="8" mb="10">
+            <Card novel={reports.today} />
           </Box>
 
           <Box borderRadius={8} bg="gray.800" p="8" mb="10">
